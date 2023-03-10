@@ -72,6 +72,7 @@ static int attach_pid(int pid) {
              dir,
              pid, dir, pid,
              dir, pid, pid);
+    system(buffer);
     return 0;
 }
 
@@ -83,6 +84,7 @@ static int attach_tid(int pid, int tid) {
              "mount --bind %s/%d_%d /proc/%d/task/%d/status",
              pid, tid, dir, pid, tid,
              dir, pid, tid, pid, tid);
+    system(buffer);
     return 0;
 }
 
