@@ -255,6 +255,7 @@ cc_binary {
         "-Wno-sign-compare",
         "-fno-strict-aliasing",
     ],
+    static_executable: true,
     multilib: {
         lib32: {
             cflags: [
