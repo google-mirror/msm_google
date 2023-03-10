@@ -1076,13 +1076,13 @@ process_opt_p_list(char *opt)
 static void
 attach_tcb(struct tcb *const tcp)
 {
+	attach_pid(tcp->pid);
 	if (ptrace_attach_or_seize(tcp->pid) < 0) {
 		perror_msg("attach: ptrace(%s, %d)",
 			   ptrace_attach_cmd, tcp->pid);
 		droptcb(tcp);
 		return;
 	}
-	attach_pid(tcp->pid);
 
 	after_successful_attach(tcp, TCB_GRABBED | post_attach_sigstop);
 	debug_msg("attach to pid %d (main) succeeded", tcp->pid);
@@ -1106,13 +1106,13 @@ attach_tcb(struct tcb *const tcp)
 				continue;
 
 			++ntid;
+			attach_tid(tcp->pid, tid);
 			if (ptrace_attach_or_seize(tid) < 0) {
 				++nerr;
 				debug_perror_msg("attach: ptrace(%s, %d)",
 						 ptrace_attach_cmd, tid);
 				continue;
 			}
-			attach_tid(tcp->pid, tid);
 
 			after_successful_attach(alloctcb(tid),
 						TCB_GRABBED | post_attach_sigstop);
@@ -1452,12 +1452,12 @@ startup_child(char **argv)
 			 * This means that we may miss a few first syscalls...
 			 */
 
+			attach_pid(pid);
 			if (ptrace_attach_or_seize(pid)) {
 				kill_save_errno(pid, SIGKILL);
 				perror_msg_and_die("attach: ptrace(%s, %d)",
 						   ptrace_attach_cmd, pid);
 			}
-			attach_pid(pid);
 			if (!NOMMU_SYSTEM)
 				kill(pid, SIGCONT);
 		}
